@@ -15,15 +15,17 @@ CC_PLUGINS="${AGENT_HOME_CC_PLUGINS:-gh33k/cc-plugins}"
 BEADS_TAP="${AGENT_HOME_BEADS_TAP:-gastownhall/beads}"
 PROJECTS_DIR="${AGENT_HOME_PROJECTS:-$HOME/projects}"
 
-ONBOARD=1; TOOLS_ONLY=0
+ONBOARD=1; TOOLS_ONLY=0; NO_HERDR=0
 for a in "$@"; do case "$a" in
   --no-onboard) ONBOARD=0 ;;
+  --no-herdr)   NO_HERDR=1 ;;
   --tools-only) TOOLS_ONLY=1; ONBOARD=0 ;;
   -h|--help)
     cat <<'USAGE'
 agent-home installer
   ./install.sh               install missing tools, then run the login checklist
   ./install.sh --no-onboard  install everything but skip the login checklist
+  ./install.sh --no-herdr    skip installing Herdr (the agent multiplexer)
   ./install.sh --tools-only  toolchain only (no plugins / projects / onboarding)
 USAGE
     exit 0 ;;
@@ -86,7 +88,17 @@ install_claude(){
     || warn "Claude Code install failed — see https://docs.claude.com/claude-code"
 }
 
-# 4) cc-plugins marketplace + inbox plugin
+# 4) Herdr — the agent multiplexer (run/monitor a herd of agents)
+install_herdr(){
+  if [ "$NO_HERDR" -eq 1 ]; then return; fi
+  if have herdr; then ok "Herdr present ($(herdr --version 2>/dev/null | head -1))"; return; fi
+  step "installing Herdr (agent multiplexer)"
+  curl -fsSL https://herdr.dev/install.sh | sh \
+    && ok "Herdr installed" \
+    || warn "Herdr install failed — see https://herdr.dev"
+}
+
+# 5) cc-plugins marketplace + inbox plugin
 install_plugins(){
   if ! have claude; then
     warn "claude not on PATH yet — skipping plugins. After restarting your shell, run:"
@@ -102,7 +114,7 @@ install_plugins(){
     || warn "install later: claude plugin install inbox@cc-plugins"
 }
 
-# 5) ~/projects convention
+# 6) ~/projects convention
 setup_projects(){
   mkdir -p "$PROJECTS_DIR"
   ok "projects dir ready: $PROJECTS_DIR"
@@ -111,6 +123,7 @@ setup_projects(){
 ensure_brew
 install_tools
 install_claude
+install_herdr
 if [ "$TOOLS_ONLY" -eq 0 ]; then
   install_plugins
   setup_projects
