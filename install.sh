@@ -79,13 +79,27 @@ install_tools(){
   done
 }
 
-# 3) Claude Code (official native installer, user-local under ~/.local)
+# 3) AI agents
+#  - Claude Code via its official native installer (user-local under ~/.local)
+#  - Codex + agent-browser as user-local npm globals (no sudo)
 install_claude(){
   if have claude; then ok "Claude Code present ($(claude --version 2>/dev/null | head -1))"; return; fi
   step "installing Claude Code"
   curl -fsSL https://claude.ai/install.sh | bash \
     && ok "Claude Code installed" \
     || warn "Claude Code install failed — see https://docs.claude.com/claude-code"
+}
+
+install_npm_agents(){
+  if ! have npm; then warn "npm missing; skipping Codex + agent-browser"; return; fi
+  # "npm spec : command name"
+  for entry in "@openai/codex:codex" "agent-browser:agent-browser"; do
+    local spec="${entry%%:*}" name="${entry##*:}"
+    if have "$name"; then ok "$name present"; continue; fi
+    step "npm install -g $spec"
+    npm install -g "$spec" >/dev/null 2>&1 && ok "$name installed" \
+      || warn "npm install -g $spec failed (install later: npm i -g $spec)"
+  done
 }
 
 # 4) Herdr — the agent multiplexer (run/monitor a herd of agents)
@@ -123,6 +137,7 @@ setup_projects(){
 ensure_brew
 install_tools
 install_claude
+install_npm_agents
 install_herdr
 if [ "$TOOLS_ONLY" -eq 0 ]; then
   install_plugins

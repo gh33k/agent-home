@@ -4,7 +4,8 @@
 
 ### Your home for agentic workflows.
 
-**One command. Laptop or server. The same battle-ready agent setup, everywhere.**
+**Put a whole herd of AI agents to work — researching, writing, automating, browsing, building —
+on your laptop or an always-on server. One command sets it all up.**
 
 [![license](https://img.shields.io/badge/license-MIT-6E56CF.svg)](LICENSE)
 [![platform](https://img.shields.io/badge/platform-macOS%20·%20Linux-3FB950.svg)]()
@@ -16,28 +17,55 @@
 git clone https://github.com/gh33k/agent-home.git && cd agent-home && ./install.sh
 ```
 
-*From a clean machine to a working agentic workspace — in minutes.*
-
 </div>
 
 ---
 
-## ✨ What you get
+## What is this?
 
-A clean machine becomes a workspace where a *herd* of agents can actually get things done:
+**agent-home turns a clean machine into a place where AI agents do real, multi-step work for you** —
+digging through sources, drafting and revising, driving a web browser, wrangling data, shipping code —
+and lets you run **several at once** instead of babysitting one chat window.
 
-| | Tool | Why it's here |
+It's not a coding tool. It's a *workspace for getting things done with agents*. It runs on your
+laptop, or on an always-on server that keeps working while you sleep — and it's set up to be
+**secure by default**, because agents that hold your credentials and act on their own need to be.
+
+---
+
+## ✨ The stack
+
+A clean machine becomes a workspace where a *herd* of agents can actually get work done:
+
+| | Tool | What it does for you |
 |---|---|---|
-| 🧠 | **[Claude Code](https://docs.claude.com/claude-code)** | the agent you drive your work with |
-| 🐑 | **[Herdr](https://herdr.dev)** | run & monitor a whole **herd** of agents from one terminal — sessions survive disconnects, re-attach over SSH (even from your phone) |
-| 📿 | **[beads](https://github.com/gastownhall/beads) (`bd`)** | git-friendly task tracking with dependencies & history, right next to your code |
+| 🧠 | **[Claude Code](https://docs.claude.com/claude-code)** | a capable general-purpose agent — reasons, researches, writes, and builds |
+| 🤖 | **[Codex](https://github.com/openai/codex)** | OpenAI's agent CLI — run it *alongside* Claude, pick the right one per task |
+| 🌐 | **[agent-browser](https://www.npmjs.com/package/agent-browser)** | hands your agents a real web browser — research, fill forms, pull data, watch pages |
+| 🐑 | **[Herdr](https://herdr.dev)** | the **multiplexer**: run & watch the whole herd from one terminal, any mix of agents, sessions that survive disconnects |
+| 📿 | **[beads](https://github.com/gastownhall/beads) (`bd`)** | so your agents never lose the thread — tasks, dependencies & history, versioned next to your work |
 | 🗃️ | **[dolt](https://github.com/dolthub/dolt)** | the versioned database beads runs on |
-| 🔌 | **[cc-plugins](https://github.com/gh33k/cc-plugins) · `inbox`** | the compound-engineering loop: capture → brainstorm → plan → activate → complete → compound |
+| 🔌 | **[cc-plugins](https://github.com/gh33k/cc-plugins) · `inbox`** | a workflow loop for ideas → plan → do → bank the lessons |
 | 🧰 | **node · gh · jq** | the supporting toolchain |
-| 📂 | **`~/projects`** | every project in its own folder, with its own beads db |
+| 📂 | **`~/projects`** | every piece of work in its own folder, with its own task db |
 
 Everything installs **user-local via Homebrew — no root** — on **macOS and Linux**.
 You bring your **own logins**. agent-home ships **zero secrets**.
+
+---
+
+## 🎯 What you can actually do
+
+A few of the things a herd is good for — coding is just one of them:
+
+- 🔎 **Research overnight** — point several agents at a question, let them read dozens of sources, come back to a cited summary.
+- ✍️ **Draft & revise** — long-form writing, editing passes, turning notes into a finished piece.
+- 🌐 **Web tasks** — agent-browser fills forms, scrapes data, monitors pages, checks prices.
+- 🗂️ **Wrangle & organize** — sort files, reshape spreadsheets, reconcile data.
+- 🛠️ **Build & ship** — Claude Code or Codex working directly on your repos.
+
+…all tracked in **beads** and running side-by-side in one **Herdr** view — so you start a few,
+detach, and check back later (from your laptop or your phone).
 
 ---
 
@@ -49,8 +77,8 @@ cd agent-home
 ./install.sh
 ```
 
-Sets up the toolchain, adds the plugin marketplace, creates `~/projects`, then runs a short
-checklist to connect *your* accounts.
+Installs the agents + toolchain, adds the plugin marketplace, creates `~/projects`, then runs a
+short checklist to connect *your* accounts.
 
 <details>
 <summary><b>Install options</b></summary>
@@ -82,9 +110,9 @@ Same installer, either place:
 ## 🐑 Running the herd
 
 [Herdr](https://herdr.dev) is how you actually *run* agents here — think `tmux`, but
-**agent-aware**. It shows which agents are working / blocked / done, keeps sessions alive
-when you disconnect, and lets you re-attach over SSH from anywhere. On a server, this is what
-makes "agents that work overnight" real: **start a herd, detach, check back from your phone.**
+**agent-aware**, and **agent-agnostic** (Claude Code, Codex, whatever you add). It shows which
+agents are working / blocked / done, keeps sessions alive when you disconnect, and lets you
+re-attach over SSH from anywhere. **Start a herd, detach, check back from your phone.**
 
 Driven by a local Unix socket and a JSON/CLI API — it scripts cleanly and stays **off the
 network** (see [Security](#-security) for why that's the point).
@@ -103,16 +131,17 @@ cd agent-home && git pull && ./install.sh
 
 ## 🔐 Security
 
-Agents read secrets, run commands, and act on instructions that can come from **untrusted
-content** — so assume an agent **can be tricked**, and make that cheap. Running a herd
-multiplies the blast radius, so the security layer matters *more*, not less.
+Agents read your secrets, run commands, and act on instructions that can come from **untrusted
+content** (a web page, a file, another tool's output) — so assume an agent **can be tricked**, and
+make that cheap. Running a herd multiplies the blast radius, so the security layer matters *more*,
+not less.
 
 **→ Full model in [`SECURITY.md`](SECURITY.md).** The short version:
 
-- 🚫 **No secrets in this repo.** Your `claude` / `gh` / `tailscale` logins stay in each tool's own keychain.
+- 🚫 **No secrets in this repo.** Your `claude` / `codex` / `gh` / `tailscale` logins stay in each tool's own keychain.
 - 🕸️ **Off the network.** Tailscale-only, no public ports. Herdr is socket-only (no TCP); OpenBao binds localhost + TLS.
 - 🎫 **Never hand an agent a root key.** Use OpenBao (or sops/age) → short-lived, `secret/agent/*`-scoped creds.
-- 🧹 `scripts/scrub.sh` fails the build if anything secret-looking would publish — run it before sharing a fork.
+- 🧹 `scripts/scrub.sh` fails if anything secret-looking would publish — run it before sharing a fork.
 
 ---
 
