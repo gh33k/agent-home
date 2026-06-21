@@ -1,0 +1,16 @@
+# secrets — never commit
+.env
+.env.*
+!.env.example
+*.local.json
+.claude/settings.local.json
+id_rsa
+id_ed25519
+*.pem
+
+# node
+node_modules/
+
+# OS / editor noise
+.DS_Store
+*.swp

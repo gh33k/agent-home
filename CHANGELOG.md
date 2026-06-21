@@ -1,0 +1,15 @@
+# Changelog
+
+All notable changes to agent-home are documented here. Versions follow
+[Semantic Versioning](https://semver.org/).
+
+## [Unreleased]
+
+### Added
+- Cross-platform `install.sh` (Homebrew-based; macOS + Linux, no root):
+  installs beads (`bd`), dolt, node, gh, jq, and Claude Code.
+- `scripts/onboarding.sh` — bring-your-own-login checklist (claude / gh / tailscale).
+- `scripts/scrub.sh` — pre-share scan that fails if secrets are about to be published.
+- cc-plugins marketplace + `inbox` plugin wiring.
+- `~/projects` convention with per-project beads (see `config/projects/README.md`).
+- Example config templates (`.env.example`, `config/claude/settings.example.json`).
